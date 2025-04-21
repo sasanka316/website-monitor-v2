@@ -56,7 +56,7 @@ def is_website_down(url):
 
 def main(creds_path):
     client = authenticate_gspread(creds_path)
-    sheet = client.open("website-monitor")
+    sheet = client.open("WebsiteMonitor")
 
     websites_sheet = sheet.worksheet("websites")
     status_log_sheet = sheet.worksheet("status_log")
