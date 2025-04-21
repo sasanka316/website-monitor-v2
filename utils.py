@@ -1,4 +1,5 @@
 # Functions to check server/DNS issues
+import streamlit as st
 import pandas as pd
 from datetime import datetime
 from google.oauth2 import service_account
@@ -9,7 +10,7 @@ from urllib.parse import urlparse
 
 def connect_to_sheets():
     creds = service_account.Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
+         st.secrets["gcp_service_account"],
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
     client = gspread.authorize(creds)
