@@ -13,7 +13,7 @@ def connect_to_sheets():
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
     client = gspread.authorize(creds)
-    sheet = client.open("website-monitor")
+    sheet = client.open("WebsiteMonitor")
     return sheet
 
 def load_websites():
