@@ -78,7 +78,14 @@ def main(creds_path):
         if isinstance(ssl_expiry, str) or isinstance(domain_expiry, str) or is_down:
             status = "DOWN"
 
-        new_row = [timestamp, name, url, status, ssl_expiry, domain_expiry]
+       new_row = [
+    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    name,
+    url,
+    status,
+    ssl_expiry.strftime("%Y-%m-%d") if ssl_expiry else "",
+    domain_expiry.strftime("%Y-%m-%d") if domain_expiry else ""
+]
         status_log_sheet.append_row(new_row, value_input_option="USER_ENTERED")
 
 if __name__ == "__main__":
