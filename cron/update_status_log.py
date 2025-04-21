@@ -1,77 +1,85 @@
-import socket
-import ssl
-import whois
-import gspread
-from google.oauth2.service_account import Credentials
-from urllib.parse import urlparse
-from datetime import datetime
 import sys
-import pandas as pd
+import socket
+import requests
+import datetime
+import whois
+import ssl
+import OpenSSL
+import gspread
+from urllib.parse import urlparse
+from google.oauth2.service_account import Credentials
+import dns.resolver
 
-def get_ssl_expiry_date(hostname):
+# Define required scopes
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+
+def authenticate_gspread(creds_path):
+    creds = Credentials.from_service_account_file(creds_path, scopes=SCOPES)
+    client = gspread.authorize(creds)
+    return client
+
+def get_domain(url):
+    parsed_url = urlparse(url)
+    return parsed_url.netloc
+
+def check_ssl_expiry(domain):
     try:
         context = ssl.create_default_context()
-        with socket.create_connection((hostname, 443), timeout=5) as sock:
-            with context.wrap_socket(sock, server_hostname=hostname) as ssock:
+        with socket.create_connection((domain, 443), timeout=5) as sock:
+            with context.wrap_socket(sock, server_hostname=domain) as ssock:
                 cert = ssock.getpeercert()
-                return datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z')
-    except:
-        return None
+                expires = datetime.datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z')
+                return expires.date()
+    except Exception as e:
+        return f"SSL Error: {e}"
 
-def get_domain_expiry_date(domain):
+def check_domain_expiry(domain):
     try:
         w = whois.whois(domain)
-        exp = w.expiration_date
-        if isinstance(exp, list):
-            exp = exp[0]
-        return pd.to_datetime(exp)
-    except:
-        return None
+        if isinstance(w.expiration_date, list):
+            return min([d for d in w.expiration_date if d])  # pick the earliest valid one
+        return w.expiration_date
+    except Exception as e:
+        return f"Whois Error: {e}"
 
-def check_status(url):
+def is_website_down(url):
     try:
-        host = urlparse(url).netloc
-        socket.gethostbyname(host)
-        return "OK"
-    except:
-        return "DOWN"
+        # DNS check
+        domain = get_domain(url)
+        dns.resolver.resolve(domain, 'A')
+        
+        # HTTP check
+        response = requests.get(url, timeout=10)
+        return response.status_code != 200
+    except Exception:
+        return True  # Consider website down if any error occurs
 
 def main(creds_path):
-    # Auth
-    creds = Credentials.from_service_account_file(
-        creds_path,
-        scopes=["https://www.googleapis.com/auth/spreadsheets"]
-    )
-    client = gspread.authorize(creds)
+    client = authenticate_gspread(creds_path)
     sheet = client.open("website-monitor")
 
-    websites_ws = sheet.worksheet("websites")
-    status_log_ws = sheet.worksheet("status_log")
+    websites_sheet = sheet.worksheet("websites")
+    status_log_sheet = sheet.worksheet("status_log")
 
-    websites = websites_ws.get_all_records()
-
-    now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    websites = websites_sheet.get_all_records()
+    timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     for site in websites:
-        url = site["URL"]
         name = site["Name"]
-        parsed = urlparse(url)
-        domain = parsed.netloc
+        url = site["URL"]
 
-        status = check_status(url)
-        ssl_expiry = get_ssl_expiry_date(domain)
-        domain_expiry = get_domain_expiry_date(domain)
+        domain = get_domain(url)
 
-        row = [
-            now,
-            name,
-            url,
-            status,
-            ssl_expiry.strftime('%Y-%m-%d') if ssl_expiry else '',
-            domain_expiry.strftime('%Y-%m-%d') if domain_expiry else ''
-        ]
+        ssl_expiry = check_ssl_expiry(domain)
+        domain_expiry = check_domain_expiry(domain)
+        is_down = is_website_down(url)
 
-        status_log_ws.append_row(row, value_input_option="USER_ENTERED")
+        status = "OK"
+        if isinstance(ssl_expiry, str) or isinstance(domain_expiry, str) or is_down:
+            status = "DOWN"
+
+        new_row = [timestamp, name, url, status, ssl_expiry, domain_expiry]
+        status_log_sheet.append_row(new_row, value_input_option="USER_ENTERED")
 
 if __name__ == "__main__":
     main(sys.argv[1])
