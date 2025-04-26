@@ -146,7 +146,7 @@ for idx, row in merged.iterrows():
         border-radius:24px;
         box-shadow:{shadow};
         border:1.5px solid {border_color};
-        padding:1.2em 1em 0em 1em;
+        padding:1.2em 1em 1em 1em;
         margin-bottom:0em;
         min-height:320px;
         max-height:320px;
@@ -175,6 +175,7 @@ for idx, row in merged.iterrows():
             white-space:normal;">
             {name}
         </div>
+        <div style="flex:1 1 auto;"></div>
         <div style="font-size:0.95em;opacity:0.8;margin-bottom:0.3em;">SSL Expiry <b>{ssl_date}</b></div>
         <div style="font-size:0.95em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
     </div>
