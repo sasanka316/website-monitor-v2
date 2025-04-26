@@ -30,28 +30,6 @@ if 'screen_width' not in st.session_state:
 
 # Listen for the width from JS
 st.experimental_get_query_params()  # triggers rerun
-import streamlit.components.v1 as components
-components.html('''
-<script>
-window.addEventListener('message', (event) => {
-    if (event.data.streamlitScreenWidth) {
-        window.parent.postMessage({isStreamlitMessage: true, width: event.data.streamlitScreenWidth}, '*');
-    }
-});
-</script>
-''', height=0)
-
-# Use Streamlit's built-in support for custom messages
-import time
-if 'last_width_update' not in st.session_state:
-    st.session_state['last_width_update'] = time.time()
-
-# Set up a callback to update the width
-import streamlit_javascript as st_js
-width = st_js.st_javascript("window.innerWidth")
-if width:
-    st.session_state['screen_width'] = width
-    st.session_state['last_width_update'] = time.time()
 
 @st.cache_data(ttl=10800)  # Cache for 3 hours
 def load_data():
