@@ -98,6 +98,21 @@ st.markdown(
 )
 st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_html=True)
 
+# Add sorting options
+sort_options = {
+    "Alphabetical": "Name",
+    "Not Working": "Status",
+    "SSL Expiry Date": "SSL Expiry",
+    "Domain Expiry Date": "Domain Expiry"
+}
+selected_sort = st.selectbox("Sort by:", list(sort_options.keys()))
+
+# Sort the data based on the selected option
+if selected_sort == "Not Working":
+    merged = merged.sort_values(by="Status", key=lambda x: x != "OK", na_position='last')
+else:
+    merged = merged.sort_values(by=sort_options[selected_sort], na_position='last')
+
 # Add custom CSS for card animations only (revert to previous, simpler style)
 st.markdown('''
 <style>
