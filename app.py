@@ -80,7 +80,7 @@ st.markdown(
 st.divider()
 
 # Display website cards in a Cupertino-style grid
-cols = st.columns(2)  # 2-column grid
+cols = st.columns(4)  # 4-column grid
 for idx, row in merged.iterrows():
     # Determine card status
     ssl_expired = False
@@ -117,10 +117,11 @@ for idx, row in merged.iterrows():
     except:
         domain_date = "Error"
 
-    # Robustly get the website name (prioritize 'Name', then 'Name_x', then 'Name_y', fallback to URL)
+    # Robustly get the website name (try all possible columns, fallback to URL)
     name = None
-    for col in ["Name", "Name_x", "Name_y"]:
-        if col in row and pd.notna(row[col]) and str(row[col]).strip() != "":
+    possible_name_cols = [c for c in row.index if c.strip().lower() in ["name", "name_x", "name_y", "website name", "site name"]]
+    for col in possible_name_cols:
+        if pd.notna(row[col]) and str(row[col]).strip() != "":
             name = row[col]
             break
     if not name or str(name).strip() == "":
@@ -135,6 +136,8 @@ for idx, row in merged.iterrows():
                 name = url
         else:
             name = "N/A"
+    # Debug output for name
+    st.write(f"Row idx {idx} - Name: {name}")
 
     # Card HTML
     card_html = f"""
@@ -155,7 +158,7 @@ for idx, row in merged.iterrows():
         cursor:pointer;
     ">
         <div style="background:#fff;border-radius:50%;width:128px;height:128px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
-            {"<img src='"+str(row["Logo URL"])+"' style='width:110px;height:110px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
+            {"<img src='"+str(row["Logo URL"]) + "' style='width:110px;height:110px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
         <div style="font-size:2em;font-weight:700;margin-bottom:0.5em;line-height:1.1;text-align:center;">{name}</div>
         <div style="font-size:1em;opacity:0.8;margin-bottom:0.5em;">SSL Expiry <b>{ssl_date}</b></div>
@@ -163,8 +166,8 @@ for idx, row in merged.iterrows():
     </div>
     </a>
     """
-    cols[idx % 2].markdown(card_html, unsafe_allow_html=True)
+    cols[idx % 4].markdown(card_html, unsafe_allow_html=True)
 
-st.markdown("⏱️ Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+st.markdown("Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 st.write("Columns:", list(merged.columns))
