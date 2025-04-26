@@ -162,30 +162,30 @@ for idx, row in merged.iterrows():
     <div class="card-anim" style="
         background:{card_color};
         color:{text_color};
-        border-radius:24px;
+        border-radius:20px;
         box-shadow:{shadow};
-        border:1.5px solid {border_color};
-        padding:1.2em 1em 1em 1em;
-        margin-bottom:2em;
-        min-height:320px;
-        max-height:320px;
-        height:320px;
+        border:1.2px solid {border_color};
+        padding:0.8em 0.7em 0.7em 0.7em;
+        margin-bottom:1.2em;
+        min-height:220px;
+        max-height:220px;
+        height:220px;
         display:flex;
         flex-direction:column;
         align-items:center;
         transition:box-shadow 0.2s;
         cursor:pointer;
     ">
-        <div style="background:#fff;border-radius:50%;width:150px;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:0.9em;">
-            {"<img src='"+str(row["Logo URL"]) + "' style='width:130px;height:130px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
+        <div style="background:#fff;border-radius:50%;width:80px;height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:0.5em;">
+            {"<img src='"+str(row["Logo URL"]) + "' style='width:64px;height:64px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
         <div style="
-            font-size:1.55em;
-            font-weight:700;
-            margin-bottom:0.3em;
+            font-size:1em;
+            font-weight:600;
+            margin-bottom:0.2em;
             line-height:1.1;
             text-align:center;
-            height:2.7em;
+            height:1.7em;
             overflow:hidden;
             display:-webkit-box;
             -webkit-line-clamp:2;
@@ -195,13 +195,12 @@ for idx, row in merged.iterrows():
             {name}
         </div>
         <div style="flex:1 1 auto;"></div>
-        <div style="font-size:0.95em;opacity:0.8;margin-bottom:0.3em;">SSL Expiry <b>{ssl_date}</b></div>
-        <div style="font-size:0.95em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
+        <div style="font-size:0.8em;opacity:0.8;margin-bottom:0.2em;">SSL Expiry <b>{ssl_date}</b></div>
+        <div style="font-size:0.8em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
     </div>
     </a>
     """
     cols[idx % 6].markdown(card_html, unsafe_allow_html=True)
-    # Add vertical space after every 6 cards (i.e., after each row)
     if (idx + 1) % 6 == 0:
         st.markdown("<div style='height:2em'></div>", unsafe_allow_html=True)
 
