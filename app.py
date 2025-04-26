@@ -210,7 +210,7 @@ for idx, row in merged.iterrows():
             -webkit-box-orient:vertical;
             text-overflow:ellipsis;
             white-space:normal;">
-            {name}
+            <span style="color: {'#FF0000' if is_down else '#00FF00'}; font-size:1.2em; margin-right:0.2em;">●</span>{name}
         </div>
         <div style="flex:1 1 auto;"></div>
         <div style="font-size:0.8em;opacity:0.8;margin-bottom:0.2em;">SSL Expiry <b>{ssl_date}</b></div>
