@@ -7,6 +7,7 @@ import ssl
 import OpenSSL
 import gspread
 from urllib.parse import urlparse
+from gspread_pandas import Spread
 from google.oauth2.service_account import Credentials
 import dns.resolver
 

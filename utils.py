@@ -37,7 +37,11 @@ def load_data_from_sheet(sheet_name):
             st.error("❌ Sheet ID missing in secrets!")
             return pd.DataFrame()
 
-        spread = Spread(st.secrets["sheet_id"], sheet_name)
+        spread = Spread(
+            st.secrets["sheet_id"],
+            sheet=sheet_name,
+            client=client  # ✅ Pass authenticated client here!
+        )
         return spread.sheet_to_df(index=None)
     except Exception as e:
         st.error(f"🔴 Failed to load {sheet_name} data: {str(e)}")
