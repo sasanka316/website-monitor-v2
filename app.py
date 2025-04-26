@@ -57,9 +57,6 @@ def load_data():
 # Load and process data
 merged = load_data()
 
-# For testing, only show the first 12 cards
-merged = merged.head(12)
-
 # Ensure required columns exist
 required_columns = {'Name', 'URL', 'Status', 'SSL Expiry', 'Domain Expiry'}
 for col in required_columns:
