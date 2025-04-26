@@ -5,7 +5,7 @@ from datetime import datetime
 
 # Configure page
 st.set_page_config(layout="wide", page_title="Website Monitor")
-st.title("🌐 Website Monitor Dashboard")
+st.title("Website Monitor Dashboard")
 st.markdown("Automatically refreshes every 3 hours.")
 
 @st.cache_data(ttl=10800)  # Cache for 3 hours
@@ -97,11 +97,11 @@ for idx, row in merged.iterrows():
         domain_expired = True
     is_down = (row.get("Status", "N/A") != "OK") or ssl_expired or domain_expired
 
-    # Cupertino style
-    card_color = "#ff3b30" if is_down else "#f8f8f8"
+    # Softer Cupertino style
+    card_color = "#ff6f61" if is_down else "#f8f8f8"
     text_color = "#fff" if is_down else "#111"
     border_color = "#e5e5ea"
-    shadow = "0 4px 16px rgba(0,0,0,0.06)" if not is_down else "0 4px 16px rgba(255,59,48,0.15)"
+    shadow = "0 4px 16px rgba(0,0,0,0.06)" if not is_down else "0 4px 16px rgba(255,111,97,0.15)"
 
     # Format dates safely
     ssl_date = "N/A"
@@ -119,7 +119,7 @@ for idx, row in merged.iterrows():
 
     # Card HTML
     card_html = f"""
-    <a href=\"{row.get('URL', '#')}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"text-decoration:none;\">
+    <a href="{row.get('URL', '#')}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
     <div style="
         background:{card_color};
         color:{text_color};
@@ -135,10 +135,10 @@ for idx, row in merged.iterrows():
         transition:box-shadow 0.2s;
         cursor:pointer;
     ">
-        <div style="background:#fff;border-radius:50%;width:64px;height:64px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
-            {"<img src='"+str(row["Logo URL"])+"' style='width:48px;height:48px;object-fit:contain;border-radius:50%;'>" if pd.notna(row.get("Logo URL")) else ""}
+        <div style="background:#fff;border-radius:50%;width:96px;height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
+            {"<img src='"+str(row["Logo URL"])+"' style='width:72px;height:72px;object-fit:contain;border-radius:50%;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
-        <div style="font-size:1.5em;font-weight:600;margin-bottom:0.5em;">{row.get('Name', 'N/A')}</div>
+        <div style="font-size:2em;font-weight:700;margin-bottom:0.5em;line-height:1.1;text-align:center;">{row.get('Name', 'N/A')}</div>
         <div style="font-size:1em;opacity:0.8;margin-bottom:0.5em;">SSL Expiry <b>{ssl_date}</b></div>
         <div style="font-size:1em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
     </div>
