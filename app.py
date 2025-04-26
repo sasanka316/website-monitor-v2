@@ -97,11 +97,11 @@ for idx, row in merged.iterrows():
         domain_expired = True
     is_down = (row.get("Status", "N/A") != "OK") or ssl_expired or domain_expired
 
-    # Softer Cupertino style
-    card_color = "#ff6f61" if is_down else "#f8f8f8"
+    # Use #FB4141 for down cards
+    card_color = "#FB4141" if is_down else "#f8f8f8"
     text_color = "#fff" if is_down else "#111"
     border_color = "#e5e5ea"
-    shadow = "0 4px 16px rgba(0,0,0,0.06)" if not is_down else "0 4px 16px rgba(255,111,97,0.15)"
+    shadow = "0 4px 16px rgba(0,0,0,0.06)" if not is_down else "0 4px 16px rgba(251,65,65,0.15)"
 
     # Format dates safely
     ssl_date = "N/A"
@@ -116,6 +116,15 @@ for idx, row in merged.iterrows():
             domain_date = pd.to_datetime(row["Domain Expiry"]).date()
     except:
         domain_date = "Error"
+
+    # Robustly get the website name (handle possible whitespace/case issues)
+    name = None
+    for col in row.index:
+        if col.strip().lower() == "name":
+            name = row[col]
+            break
+    if not name or str(name).strip() == "":
+        name = "N/A"
 
     # Card HTML
     card_html = f"""
@@ -138,7 +147,7 @@ for idx, row in merged.iterrows():
         <div style="background:#fff;border-radius:50%;width:96px;height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
             {"<img src='"+str(row["Logo URL"])+"' style='width:72px;height:72px;object-fit:contain;border-radius:50%;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
-        <div style="font-size:2em;font-weight:700;margin-bottom:0.5em;line-height:1.1;text-align:center;">{row.get('Name', 'N/A')}</div>
+        <div style="font-size:2em;font-weight:700;margin-bottom:0.5em;line-height:1.1;text-align:center;">{name}</div>
         <div style="font-size:1em;opacity:0.8;margin-bottom:0.5em;">SSL Expiry <b>{ssl_date}</b></div>
         <div style="font-size:1em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
     </div>
