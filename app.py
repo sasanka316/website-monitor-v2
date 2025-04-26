@@ -17,20 +17,6 @@ st.markdown("<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98e
     " (SLST, GMT+5:30)</div>", unsafe_allow_html=True)
 #st.markdown("Automatically refreshes every 3 hours.")
 
-# Inject JS to detect screen width and store in Streamlit session state
-st.markdown('''
-<script>
-    const width = window.innerWidth;
-    window.parent.postMessage({streamlitScreenWidth: width}, '*');
-</script>
-''', unsafe_allow_html=True)
-
-if 'screen_width' not in st.session_state:
-    st.session_state['screen_width'] = 1200  # default
-
-# Listen for the width from JS
-st.experimental_get_query_params()  # triggers rerun
-
 @st.cache_data(ttl=10800)  # Cache for 3 hours
 def load_data():
     """Load and merge data with error handling"""
@@ -176,31 +162,8 @@ st.markdown('''
 </style>
 ''', unsafe_allow_html=True)
 
-# Responsive columns: detect screen width using JS cookie
-_ = st.query_params  # triggers rerun
-
-st.markdown("""
-<script>
-    document.cookie = "screen_width=" + window.innerWidth + "; path=/";
-    window.dispatchEvent(new Event('resize'));
-</script>
-""", unsafe_allow_html=True)
-
-import os
-
-def get_screen_width():
-    cookies = os.environ.get("HTTP_COOKIE", "")
-    for cookie in cookies.split(";"):
-        if "screen_width=" in cookie:
-            try:
-                return int(cookie.strip().split("=")[1])
-            except:
-                return 1200
-    return 1200
-
-screen_width = get_screen_width()
-num_cols = 2 if screen_width < 768 else 6
-import math
+# Display website cards in a Cupertino-style grid
+num_cols = 6
 num_rows = math.ceil(len(merged) / num_cols)
 card_idx = 0
 for row_idx in range(num_rows):
@@ -284,4 +247,3 @@ for row_idx in range(num_rows):
             """
             cols[col_idx].markdown(card_html, unsafe_allow_html=True)
             card_idx += 1
-
