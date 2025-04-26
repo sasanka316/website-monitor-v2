@@ -92,8 +92,8 @@ down_count = sum(
 
 # Compact summary row
 st.markdown(
-    f"<div style='font-size:1em; margin-bottom:0.2em; margin-top:-0.7em;'><b>Total:</b> {total} | <span style='color:#b00020;'>❌ <b>Down:</b> {down_count}</span> | "
-    f"<span style='color:#b00020;'>🔒 <b>Expired SSL:</b> {expired_ssl}</span> | <span style='color:#b00020;'>🌐 <b>Expired Domain:</b> {expired_domain}</span></div>",
+    f"<div style='font-size:1em; margin-bottom:0.2em; margin-top:-0.7em;'><b>Total:</b> {total} | <span style='color:#000000;'>❌ <b>Down:</b> {down_count}</span> | "
+    f"<span style='color:#000000;'>🔒 <b>Expired SSL:</b> {expired_ssl}</span> | <span style='color:#000000;'>🌐 <b>Expired Domain:</b> {expired_domain}</span></div>",
     unsafe_allow_html=True
 )
 st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_html=True)
