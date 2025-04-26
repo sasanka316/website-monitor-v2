@@ -66,6 +66,21 @@ def is_website_down(url):
     except Exception:
         return True  # Consider website down if any error occurs
 
+def find_row_by_url(sheet, url):
+    """Find the row number for a given URL in the status log sheet"""
+    try:
+        # Get all values from the sheet
+        all_values = sheet.get_all_values()
+        
+        # Look for the URL in the third column (index 2)
+        for i, row in enumerate(all_values, start=1):  # start=1 because sheet rows are 1-indexed
+            if len(row) >= 3 and row[2] == url:  # URL is in the third column
+                return i
+        return None
+    except Exception as e:
+        print(f"Error finding row for URL {url}: {str(e)}")
+        return None
+
 def main():
     try:
         client = authenticate_gspread()
@@ -100,7 +115,16 @@ def main():
                 domain_expiry.strftime("%Y-%m-%d") if isinstance(domain_expiry, datetime.date) else str(domain_expiry)
             ]
 
-            status_log_sheet.append_row(new_row, value_input_option="USER_ENTERED")
+            # Find existing row for this URL
+            row_num = find_row_by_url(status_log_sheet, url)
+            
+            if row_num:
+                # Update existing row
+                status_log_sheet.update(f'A{row_num}:F{row_num}', [new_row])
+            else:
+                # If no existing row found, append new row
+                status_log_sheet.append_row(new_row, value_input_option="USER_ENTERED")
+
     except Exception as e:
         print(f"Error in main execution: {str(e)}")
         sys.exit(1)
