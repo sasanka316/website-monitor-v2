@@ -129,9 +129,6 @@ def compute_is_down(row):
 
 merged["is_down"] = merged.apply(compute_is_down, axis=1)
 
-# Debug: Show first few rows with is_down
-st.write(merged[["Name", "Status", "SSL Expiry", "Domain Expiry", "is_down"]].head(10))
-
 selected_sort = st.selectbox("Sort by:", list(sort_options.keys()))
 
 # Sort the data based on the selected option
