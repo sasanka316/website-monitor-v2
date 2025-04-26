@@ -203,13 +203,10 @@ for idx, row in merged.iterrows():
             margin-bottom:0.2em;
             line-height:1.1;
             text-align:center;
-            height:1.7em;
-            overflow:hidden;
-            display:-webkit-box;
-            -webkit-line-clamp:2;
-            -webkit-box-orient:vertical;
-            text-overflow:ellipsis;
-            white-space:normal;">
+            height:auto;
+            overflow:visible;
+            white-space:normal;
+            padding:0 0.2em;">
             <span style="color: {'#FF0000' if is_down else '#00FF00'}; font-size:1.2em; margin-right:0.2em;">●</span>{name}
         </div>
         <div style="flex:1 1 auto;"></div>
