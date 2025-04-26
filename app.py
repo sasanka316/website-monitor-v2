@@ -42,7 +42,7 @@ for col in required_columns:
         merged[col] = None if col in ['SSL Expiry', 'Domain Expiry'] else 'N/A'
 
 # Sort and calculate metrics
-merged = merged.sort_values("Name", na_position='last')
+merged = merged.sort_values("Name", na_position='last', ignore_index=True)
 current_time = datetime.now()
 
 total = len(merged)
