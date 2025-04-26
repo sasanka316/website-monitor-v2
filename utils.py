@@ -18,14 +18,26 @@ def connect_to_sheets():
             st.error("❌ GCP Service Account missing in secrets!")
             return None
             
-        # Print the first few characters of the private key for debugging
-        private_key = st.secrets["gcp_service_account"]["private_key"]
-        st.write(f"Private key starts with: {private_key[:20]}...")
+        # Get the service account info
+        service_account_info = st.secrets["gcp_service_account"]
         
+        # Ensure the private key is properly formatted
+        if "private_key" in service_account_info:
+            private_key = service_account_info["private_key"]
+            if not private_key.startswith("-----BEGIN PRIVATE KEY-----"):
+                st.error("❌ Private key is not properly formatted")
+                return None
+        else:
+            st.error("❌ Private key missing in service account info")
+            return None
+            
+        # Create credentials
         creds = service_account.Credentials.from_service_account_info(
-            st.secrets["gcp_service_account"],
+            service_account_info,
             scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         )
+        
+        # Create client
         client = Client(creds)
         return client
     except Exception as e:
