@@ -134,11 +134,11 @@ for idx, row in merged.iterrows():
         domain_expired = True
     is_down = (row.get("Status", "N/A") != "OK") or ssl_expired or domain_expired
 
-    # Use #FB4141 for down cards
-    card_color = "#FB4141" if is_down else "#f8f8f8"
-    text_color = "#fff" if is_down else "#111"
-    border_color = "#e5e5ea"
-    shadow = "0 4px 16px rgba(0,0,0,0.06)" if not is_down else "0 4px 16px rgba(251,65,65,0.15)"
+    # Use red border for down cards, green for working cards
+    border_color = "#FF0000" if is_down else "#00FF00"
+    card_color = "#f8f8f8"
+    text_color = "#111"
+    shadow = "0 4px 16px rgba(0,0,0,0.06)"
 
     # Format dates safely
     ssl_date = "N/A"
@@ -182,7 +182,7 @@ for idx, row in merged.iterrows():
         color:{text_color};
         border-radius:20px;
         box-shadow:{shadow};
-        border:1.2px solid {border_color};
+        border:2px solid {border_color};
         padding:0.8em 0.7em 0.7em 0.7em;
         margin-bottom:1.2em;
         min-height:220px;
