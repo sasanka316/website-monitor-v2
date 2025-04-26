@@ -14,12 +14,16 @@ import json
 def connect_to_sheets():
     """Establish connection to Google Sheets with robust error handling"""
     try:
+        # Debug: Print available secrets
+        st.write("Available secrets:", list(st.secrets.keys()))
+        
         if "gcp_service_account" not in st.secrets:
             st.error("❌ GCP Service Account missing in secrets!")
             return None
             
-        # Get the service account info
+        # Debug: Print service account info
         service_account_info = st.secrets["gcp_service_account"]
+        st.write("Service account email:", service_account_info.get("client_email", "Not found"))
         
         # Create credentials
         creds = service_account.Credentials.from_service_account_info(
@@ -29,7 +33,20 @@ def connect_to_sheets():
         
         # Create client
         client = gspread.authorize(creds)
-        return client
+        
+        # Test the connection
+        if "sheet_id" in st.secrets:
+            try:
+                spreadsheet = client.open_by_key(st.secrets["sheet_id"])
+                st.success("✅ Successfully connected to Google Sheets")
+                return client
+            except Exception as e:
+                st.error(f"❌ Failed to open spreadsheet: {str(e)}")
+                return None
+        else:
+            st.error("❌ Sheet ID missing in secrets!")
+            return None
+            
     except Exception as e:
         st.error(f"🔴 Google Sheets connection failed: {str(e)}")
         st.error("Please check your secrets configuration in Streamlit Cloud")
