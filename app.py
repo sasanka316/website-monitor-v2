@@ -6,6 +6,7 @@ from datetime import datetime
 # Configure page
 st.set_page_config(layout="wide", page_title="Website Monitor")
 st.title("Website Monitor Dashboard")
+st.markdown("Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 #st.markdown("Automatically refreshes every 3 hours.")
 
 @st.cache_data(ttl=10800)  # Cache for 3 hours
@@ -79,8 +80,26 @@ st.markdown(
 )
 st.divider()
 
+# Add custom CSS for card animations
+st.markdown('''
+<style>
+.card-anim {
+    transition: transform 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s cubic-bezier(.4,0,.2,1);
+}
+.card-anim:hover {
+    transform: scale(1.045) translateY(-6px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    z-index: 2;
+}
+.card-anim:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+</style>
+''', unsafe_allow_html=True)
+
 # Display website cards in a Cupertino-style grid
-cols = st.columns(8)  # 8-column grid
+cols = st.columns(5)  # 5-column grid
 for idx, row in merged.iterrows():
     # Determine card status
     ssl_expired = False
@@ -140,7 +159,7 @@ for idx, row in merged.iterrows():
     # Card HTML
     card_html = f"""
     <a href="{row.get('URL', '#')}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
-    <div style="
+    <div class="card-anim" style="
         background:{card_color};
         color:{text_color};
         border-radius:24px;
@@ -181,9 +200,8 @@ for idx, row in merged.iterrows():
     </div>
     </a>
     """
-    cols[idx % 8].markdown(card_html, unsafe_allow_html=True)
-    # Add vertical space after every 8 cards (i.e., after each row)
-    if (idx + 1) % 8 == 0:
+    cols[idx % 5].markdown(card_html, unsafe_allow_html=True)
+    # Add vertical space after every 5 cards (i.e., after each row)
+    if (idx + 1) % 5 == 0:
         st.markdown("<div style='height:2em'></div>", unsafe_allow_html=True)
 
-st.markdown("Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
