@@ -147,7 +147,7 @@ for idx, row in merged.iterrows():
         box-shadow:{shadow};
         border:1.5px solid {border_color};
         padding:1.2em 1em 1em 1em;
-        margin-bottom:0em;
+        margin-bottom:2em;
         min-height:320px;
         max-height:320px;
         height:320px;
@@ -157,8 +157,8 @@ for idx, row in merged.iterrows():
         transition:box-shadow 0.2s;
         cursor:pointer;
     ">
-        <div style="background:#fff;border-radius:50%;width:110px;height:110px;display:flex;align-items:center;justify-content:center;margin-bottom:0.7em;">
-            {"<img src='"+str(row["Logo URL"]) + "' style='width:90px;height:90px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
+        <div style="background:#fff;border-radius:50%;width:150px;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:0.9em;">
+            {"<img src='"+str(row["Logo URL"]) + "' style='width:130px;height:130px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
         <div style="
             font-size:1.55em;
