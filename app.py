@@ -80,13 +80,9 @@ st.markdown(
 )
 st.divider()
 
-# Add custom CSS for card animations and Apple system font
+# Add custom CSS for card animations only (remove font-family override)
 st.markdown('''
 <style>
-body, div, span, a, b {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
-}
 .card-anim {
     transition: transform 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s cubic-bezier(.4,0,.2,1);
 }
