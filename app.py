@@ -3,6 +3,7 @@ from utils import load_websites, load_latest_statuses
 import pandas as pd
 from datetime import datetime
 from pandas.api.types import is_datetime64_any_dtype
+from zoneinfo import ZoneInfo
 
 # Set current_time at the very top for consistency
 current_time = datetime.now()
@@ -10,7 +11,9 @@ current_time = datetime.now()
 # Configure page
 st.set_page_config(layout="wide", page_title="Website Monitor")
 st.title("Website Monitor Dashboard")
-st.markdown("<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "</div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>Last Refreshed: " +
+    datetime.now(ZoneInfo('Asia/Colombo')).strftime("%Y-%m-%d %H:%M:%S") +
+    " (SLST, GMT+5:30)</div>", unsafe_allow_html=True)
 #st.markdown("Automatically refreshes every 3 hours.")
 
 @st.cache_data(ttl=10800)  # Cache for 3 hours
