@@ -111,6 +111,7 @@ sort_options = {
 
 # Add is_down column for sorting
 def compute_is_down(row):
+    status = str(row.get("Status", "")).strip().lower()
     ssl_expired = False
     domain_expired = False
     try:
@@ -123,9 +124,13 @@ def compute_is_down(row):
             domain_expired = pd.to_datetime(row["Domain Expiry"]) < current_time
     except:
         domain_expired = True
-    return (row.get("Status", "N/A") != "OK") or ssl_expired or domain_expired
+    # Only 'ok' (case-insensitive) is considered working
+    return (status != "ok") or ssl_expired or domain_expired
 
 merged["is_down"] = merged.apply(compute_is_down, axis=1)
+
+# Debug: Show first few rows with is_down
+st.write(merged[["Name", "Status", "SSL Expiry", "Domain Expiry", "is_down"]].head(10))
 
 selected_sort = st.selectbox("Sort by:", list(sort_options.keys()))
 
@@ -156,7 +161,6 @@ st.markdown('''
 # Display website cards in a Cupertino-style grid
 cols = st.columns(6)  # 6-column grid
 for idx, row in merged.iterrows():
-    # Use is_down from DataFrame for all status logic
     is_down = row.get('is_down', False)
 
     # Use red border for down cards, light gray for working cards
