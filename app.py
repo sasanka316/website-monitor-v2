@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 from pandas.api.types import is_datetime64_any_dtype
 from zoneinfo import ZoneInfo
+import math
 
 # Set current_time at the very top for consistency
 current_time = datetime.now()
@@ -162,92 +163,88 @@ st.markdown('''
 ''', unsafe_allow_html=True)
 
 # Display website cards in a Cupertino-style grid
-cols = st.columns(6)  # 6-column grid
-for idx, row in merged.iterrows():
-    is_down = row.get('is_down', False)
-
-    # Use red border for down cards, light gray for working cards
-    border_color = "#FF0000" if is_down else "#e5e5ea"
-    card_color = "#f8f8f8"
-    text_color = "#111"
-    shadow = "0 4px 16px rgba(0,0,0,0.06)"
-
-    # Format dates safely
-    ssl_date = "N/A"
-    domain_date = "N/A"
-    try:
-        if pd.notna(row.get("SSL Expiry")):
-            ssl_date = pd.to_datetime(row["SSL Expiry"]).date()
-    except:
-        ssl_date = "Error"
-    try:
-        if pd.notna(row.get("Domain Expiry")):
-            domain_date = pd.to_datetime(row["Domain Expiry"]).date()
-    except:
-        domain_date = "Error"
-
-    # Robustly get the website name (try all possible columns, fallback to URL)
-    name = None
-    possible_name_cols = [c for c in row.index if c.strip().lower() in ["name", "name_x", "name_y", "website name", "site name"]]
-    for col in possible_name_cols:
-        if pd.notna(row[col]) and str(row[col]).strip() != "":
-            name = row[col]
-            break
-    if not name or str(name).strip() == "":
-        # Try to extract from URL
-        url = str(row.get("URL", ""))
-        if url and url.startswith("http"):
+num_cols = 6
+num_rows = math.ceil(len(merged) / num_cols)
+card_idx = 0
+for row_idx in range(num_rows):
+    cols = st.columns(num_cols)
+    for col_idx in range(num_cols):
+        if card_idx < len(merged):
+            row = merged.iloc[card_idx]
+            is_down = row.get('is_down', False)
+            border_color = "#FF0000" if is_down else "#e5e5ea"
+            card_color = "#f8f8f8"
+            text_color = "#111"
+            shadow = "0 4px 16px rgba(0,0,0,0.06)"
+            ssl_date = "N/A"
+            domain_date = "N/A"
             try:
-                from urllib.parse import urlparse
-                parsed = urlparse(url)
-                name = parsed.hostname.replace("www.", "") if parsed.hostname else url
+                if pd.notna(row.get("SSL Expiry")):
+                    ssl_date = pd.to_datetime(row["SSL Expiry"]).date()
             except:
-                name = url
-        else:
-            name = "N/A"
-
-    # Card HTML
-    card_html = f"""
-    <a href="{row.get('URL', '#')}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
-    <div class="card-anim" style="
-        background:{card_color};
-        color:{text_color};
-        border-radius:20px;
-        box-shadow:{shadow};
-        border:3px solid {border_color};
-        padding:0.8em 0.7em 0.7em 0.7em;
-        margin-bottom:1.2em;
-        min-height:220px;
-        max-height:220px;
-        height:220px;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        transition:box-shadow 0.2s;
-        cursor:pointer;
-    ">
-        <div style="background:#fff;border-radius:50%;width:90px;height:90px;display:flex;align-items:center;justify-content:center;margin-bottom:0.5em;">
-            {"<img src='"+str(row["Logo URL"]) + "' style='width:90px;height:90px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
-        </div>
-        <div style="
-            font-size:1em;
-            font-weight:600;
-            margin-bottom:0.2em;
-            line-height:1.1;
-            text-align:center;
-            height:auto;
-            overflow:visible;
-            white-space:normal;
-            padding:0 0.2em;">
-            <span style=\"color: {'#FF0000' if is_down else '#00FF00'}; font-size:1.2em; margin-right:0.2em;\">●</span>{name}
-        </div>
-        <div style="flex:1 1 auto;"></div>
-        <div style="font-size:0.8em;opacity:0.8;margin-bottom:0.2em;">SSL Expiry <b>{ssl_date}</b></div>
-        <div style="font-size:0.8em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
-    </div>
-    </a>
-    """
-    cols[idx % 6].markdown(card_html, unsafe_allow_html=True)
-    if (idx + 1) % 6 == 0:
-        st.markdown("<div style='height:2em'></div>", unsafe_allow_html=True)
+                ssl_date = "Error"
+            try:
+                if pd.notna(row.get("Domain Expiry")):
+                    domain_date = pd.to_datetime(row["Domain Expiry"]).date()
+            except:
+                domain_date = "Error"
+            name = None
+            possible_name_cols = [c for c in row.index if c.strip().lower() in ["name", "name_x", "name_y", "website name", "site name"]]
+            for col in possible_name_cols:
+                if pd.notna(row[col]) and str(row[col]).strip() != "":
+                    name = row[col]
+                    break
+            if not name or str(name).strip() == "":
+                url = str(row.get("URL", ""))
+                if url and url.startswith("http"):
+                    try:
+                        from urllib.parse import urlparse
+                        parsed = urlparse(url)
+                        name = parsed.hostname.replace("www.", "") if parsed.hostname else url
+                    except:
+                        name = url
+                else:
+                    name = "N/A"
+            card_html = f"""
+            <a href="{row.get('URL', '#')}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+            <div class="card-anim" style="
+                background:{card_color};
+                color:{text_color};
+                border-radius:20px;
+                box-shadow:{shadow};
+                border:3px solid {border_color};
+                padding:0.8em 0.7em 0.7em 0.7em;
+                margin-bottom:1.2em;
+                min-height:220px;
+                max-height:220px;
+                height:220px;
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                transition:box-shadow 0.2s;
+                cursor:pointer;
+            ">
+                <div style="background:#fff;border-radius:50%;width:90px;height:90px;display:flex;align-items:center;justify-content:center;margin-bottom:0.5em;">
+                    {"<img src='"+str(row["Logo URL"]) + "' style='width:90px;height:90px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
+                </div>
+                <div style="
+                    font-size:1em;
+                    font-weight:600;
+                    margin-bottom:0.2em;
+                    line-height:1.1;
+                    text-align:center;
+                    height:auto;
+                    overflow:visible;
+                    white-space:normal;
+                    padding:0 0.2em;">
+                    <span style=\"color: {'#FF0000' if is_down else '#00FF00'}; font-size:1.2em; margin-right:0.2em;\">●</span>{name}
+                </div>
+                <div style="flex:1 1 auto;"></div>
+                <div style="font-size:0.8em;opacity:0.8;margin-bottom:0.2em;">SSL Expiry <b>{ssl_date}</b></div>
+                <div style="font-size:0.8em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
+            </div>
+            </a>
+            """
+            cols[col_idx].markdown(card_html, unsafe_allow_html=True)
+            card_idx += 1
 
