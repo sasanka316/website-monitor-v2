@@ -176,8 +176,8 @@ for idx, row in merged.iterrows():
         transition:box-shadow 0.2s;
         cursor:pointer;
     ">
-        <div style="background:#fff;border-radius:50%;width:80px;height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:0.5em;">
-            {"<img src='"+str(row["Logo URL"]) + "' style='width:64px;height:64px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
+        <div style="background:#fff;border-radius:50%;width:90px;height:90px;display:flex;align-items:center;justify-content:center;margin-bottom:0.5em;">
+            {"<img src='"+str(row["Logo URL"]) + "' style='width:90px;height:90px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
         <div style="
             font-size:1em;
