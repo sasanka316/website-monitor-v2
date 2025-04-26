@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from google.oauth2 import service_account
 import gspread
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import ssl
 import whois
@@ -114,25 +114,25 @@ def check_ssl_expiry(url):
     try:
         hostname = urlparse(url).hostname
         if not hostname:
-            return None
+            return datetime.now() - timedelta(days=1)  # Return expired date
             
         cert = ssl.get_server_certificate((hostname, 443))
         x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
         expiry_str = x509.get_notAfter().decode('ascii')
         return datetime.strptime(expiry_str, '%Y%m%d%H%M%SZ')
     except Exception:
-        return None
+        return datetime.now() - timedelta(days=1)  # Return expired date
 
 def check_domain_expiry(url):
     """Check domain expiry with improved URL parsing"""
     try:
         domain = urlparse(url).hostname
         if not domain:
-            return None
+            return datetime.now() - timedelta(days=1)  # Return expired date
             
         w = whois.whois(domain)
         if isinstance(w.expiration_date, list):
-            return w.expiration_date[0]
+            return min([d for d in w.expiration_date if d])  # pick the earliest valid one
         return w.expiration_date
     except Exception:
-        return None
+        return datetime.now() - timedelta(days=1)  # Return expired date
