@@ -33,6 +33,16 @@ def load_data():
     else:
         merged_df = websites_df if not websites_df.empty else statuses_df
     
+    # Ensure Name column exists
+    if 'Name' not in merged_df.columns:
+        # Try to find alternative name columns
+        name_cols = [col for col in merged_df.columns if 'name' in col.lower()]
+        if name_cols:
+            merged_df['Name'] = merged_df[name_cols[0]]
+        else:
+            # If no name column found, create one from URL
+            merged_df['Name'] = merged_df['URL'].apply(lambda x: x.split('//')[-1].split('/')[0] if pd.notna(x) else '')
+    
     # Clean and sort the data
     merged_df['Name'] = merged_df['Name'].fillna('').astype(str).str.strip()
     return merged_df.sort_values("Name", na_position='last', ignore_index=True)
