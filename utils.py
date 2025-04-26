@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from google.oauth2 import service_account
-from gspread_pandas import Spread, Client
+import gspread
 from datetime import datetime
 import requests
 import ssl
@@ -21,16 +21,6 @@ def connect_to_sheets():
         # Get the service account info
         service_account_info = st.secrets["gcp_service_account"]
         
-        # Ensure the private key is properly formatted
-        if "private_key" in service_account_info:
-            private_key = service_account_info["private_key"]
-            if not private_key.startswith("-----BEGIN PRIVATE KEY-----"):
-                st.error("❌ Private key is not properly formatted")
-                return None
-        else:
-            st.error("❌ Private key missing in service account info")
-            return None
-            
         # Create credentials
         creds = service_account.Credentials.from_service_account_info(
             service_account_info,
@@ -38,7 +28,7 @@ def connect_to_sheets():
         )
         
         # Create client
-        client = Client(creds)
+        client = gspread.authorize(creds)
         return client
     except Exception as e:
         st.error(f"🔴 Google Sheets connection failed: {str(e)}")
@@ -57,11 +47,17 @@ def load_data_from_sheet(sheet_name):
             st.error("❌ Sheet ID missing in secrets!")
             return pd.DataFrame()
 
-        # Print the sheet ID for debugging
-        st.write(f"Using sheet ID: {st.secrets['sheet_id']}")
+        # Open the spreadsheet
+        spreadsheet = client.open_by_key(st.secrets["sheet_id"])
         
-        spread = Spread(st.secrets["sheet_id"], sheet_name)
-        df = spread.sheet_to_df(index=None)
+        # Get the worksheet
+        worksheet = spreadsheet.worksheet(sheet_name)
+        
+        # Get all values
+        data = worksheet.get_all_records()
+        
+        # Convert to DataFrame
+        df = pd.DataFrame(data)
         
         if df.empty:
             st.warning(f"⚠️ No data found in sheet: {sheet_name}")
