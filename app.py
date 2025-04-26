@@ -4,6 +4,9 @@ import pandas as pd
 from datetime import datetime
 from pandas.api.types import is_datetime64_any_dtype
 
+# Set current_time at the very top for consistency
+current_time = datetime.now()
+
 # Configure page
 st.set_page_config(layout="wide", page_title="Website Monitor")
 st.title("Website Monitor Dashboard")
@@ -61,7 +64,6 @@ for col in required_columns:
 # Clean and prepare the Name column for sorting
 merged['Name'] = merged['Name'].fillna('').astype(str).str.strip()
 merged = merged.sort_values("Name", na_position='last', ignore_index=True)
-current_time = datetime.now()
 
 total = len(merged)
 
