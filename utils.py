@@ -14,18 +14,12 @@ import json
 def connect_to_sheets():
     """Establish connection to Google Sheets with robust error handling"""
     try:
-        # Debug: Print available secrets
-        st.write("Available secrets:", list(st.secrets.keys()))
-        
         if "gcp_service_account" not in st.secrets:
             st.error("❌ GCP Service Account missing in secrets!")
             return None
             
-        # Debug: Print service account info
-        service_account_info = st.secrets["gcp_service_account"]
-        st.write("Service account email:", service_account_info.get("client_email", "Not found"))
-        
         # Get sheet_id from service account info
+        service_account_info = st.secrets["gcp_service_account"]
         sheet_id = service_account_info.get("sheet_id")
         if not sheet_id:
             st.error("❌ Sheet ID missing in service account info!")
@@ -43,7 +37,6 @@ def connect_to_sheets():
         # Test the connection
         try:
             spreadsheet = client.open_by_key(sheet_id)
-            st.success("✅ Successfully connected to Google Sheets")
             return client, sheet_id
         except Exception as e:
             st.error(f"❌ Failed to open spreadsheet: {str(e)}")
@@ -76,8 +69,6 @@ def load_data_from_sheet(sheet_name):
         
         if df.empty:
             st.warning(f"⚠️ No data found in sheet: {sheet_name}")
-        else:
-            st.success(f"✅ Successfully loaded {len(df)} rows from {sheet_name}")
             
         return df
     except Exception as e:
