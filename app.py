@@ -154,20 +154,8 @@ st.markdown('''
 # Display website cards in a Cupertino-style grid
 cols = st.columns(6)  # 6-column grid
 for idx, row in merged.iterrows():
-    # Determine card status
-    ssl_expired = False
-    domain_expired = False
-    try:
-        if pd.notna(row.get("SSL Expiry")):
-            ssl_expired = pd.to_datetime(row["SSL Expiry"]) < current_time
-    except:
-        ssl_expired = True
-    try:
-        if pd.notna(row.get("Domain Expiry")):
-            domain_expired = pd.to_datetime(row["Domain Expiry"]) < current_time
-    except:
-        domain_expired = True
-    is_down = (row.get("Status", "N/A") != "OK") or ssl_expired or domain_expired
+    # Use is_down from DataFrame for all status logic
+    is_down = row.get('is_down', False)
 
     # Use red border for down cards, light gray for working cards
     border_color = "#FF0000" if is_down else "#e5e5ea"
@@ -242,7 +230,7 @@ for idx, row in merged.iterrows():
             overflow:visible;
             white-space:normal;
             padding:0 0.2em;">
-            <span style="color: {'#FF0000' if is_down else '#00FF00'}; font-size:1.2em; margin-right:0.2em;">●</span>{name}
+            <span style=\"color: {'#FF0000' if is_down else '#00FF00'}; font-size:1.2em; margin-right:0.2em;\">●</span>{name}
         </div>
         <div style="flex:1 1 auto;"></div>
         <div style="font-size:0.8em;opacity:0.8;margin-bottom:0.2em;">SSL Expiry <b>{ssl_date}</b></div>
