@@ -79,59 +79,71 @@ st.markdown(
 )
 st.divider()
 
-# Display website cards
-for _, row in merged.iterrows():
-    col = st.columns(1)[0]
-    with col:
-        # Determine card status
-        ssl_expired = False
-        domain_expired = False
-        
-        try:
-            if pd.notna(row.get("SSL Expiry")):
-                ssl_expired = pd.to_datetime(row["SSL Expiry"]) < current_time
-        except:
-            ssl_expired = True
-            
-        try:
-            if pd.notna(row.get("Domain Expiry")):
-                domain_expired = pd.to_datetime(row["Domain Expiry"]) < current_time
-        except:
-            domain_expired = True
-            
-        is_down = (row.get("Status", "N/A") != "OK") or ssl_expired or domain_expired
-        
-        card_color = "#ffdddd" if is_down else "#e6ffec"
-        status_icon = "🔴" if is_down else "🟢"
-        
-        # Format dates safely
-        ssl_date = "N/A"
-        domain_date = "N/A"
-        
-        try:
-            if pd.notna(row.get("SSL Expiry")):
-                ssl_date = pd.to_datetime(row["SSL Expiry"]).date()
-        except:
-            ssl_date = "Error"
-            
-        try:
-            if pd.notna(row.get("Domain Expiry")):
-                domain_date = pd.to_datetime(row["Domain Expiry"]).date()
-        except:
-            domain_date = "Error"
-        
-        st.markdown(
-            f"""
-            <div style="background-color:{card_color}; padding:1em; border-radius:1em; margin-bottom:1em;">
-                <h4>{status_icon} {row.get('Name', 'N/A')}</h4>
-                <a href="{row.get('URL', '#')}" target="_blank">{row.get('URL', 'N/A')}</a><br/>
-                {f'<img src="{row["Logo URL"]}" width="100"/><br/>' if pd.notna(row.get("Logo URL")) else ''}
-                <b>Status:</b> {row.get('Status', 'N/A')}<br/>
-                <b>SSL Expiry:</b> {ssl_date}<br/>
-                <b>Domain Expiry:</b> {domain_date}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+# Display website cards in a Cupertino-style grid
+cols = st.columns(2)  # 2-column grid
+for idx, row in merged.iterrows():
+    # Determine card status
+    ssl_expired = False
+    domain_expired = False
+    try:
+        if pd.notna(row.get("SSL Expiry")):
+            ssl_expired = pd.to_datetime(row["SSL Expiry"]) < current_time
+    except:
+        ssl_expired = True
+    try:
+        if pd.notna(row.get("Domain Expiry")):
+            domain_expired = pd.to_datetime(row["Domain Expiry"]) < current_time
+    except:
+        domain_expired = True
+    is_down = (row.get("Status", "N/A") != "OK") or ssl_expired or domain_expired
+
+    # Cupertino style
+    card_color = "#ff3b30" if is_down else "#f8f8f8"
+    text_color = "#fff" if is_down else "#111"
+    border_color = "#e5e5ea"
+    shadow = "0 4px 16px rgba(0,0,0,0.06)" if not is_down else "0 4px 16px rgba(255,59,48,0.15)"
+
+    # Format dates safely
+    ssl_date = "N/A"
+    domain_date = "N/A"
+    try:
+        if pd.notna(row.get("SSL Expiry")):
+            ssl_date = pd.to_datetime(row["SSL Expiry"]).date()
+    except:
+        ssl_date = "Error"
+    try:
+        if pd.notna(row.get("Domain Expiry")):
+            domain_date = pd.to_datetime(row["Domain Expiry"]).date()
+    except:
+        domain_date = "Error"
+
+    # Card HTML
+    card_html = f"""
+    <a href=\"{row.get('URL', '#')}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"text-decoration:none;\">
+    <div style="
+        background:{card_color};
+        color:{text_color};
+        border-radius:24px;
+        box-shadow:{shadow};
+        border:1.5px solid {border_color};
+        padding:2em 1.5em 1.5em 1.5em;
+        margin-bottom:2em;
+        min-height:270px;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        transition:box-shadow 0.2s;
+        cursor:pointer;
+    ">
+        <div style="background:#fff;border-radius:50%;width:64px;height:64px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
+            {"<img src='"+str(row["Logo URL"])+"' style='width:48px;height:48px;object-fit:contain;border-radius:50%;'>" if pd.notna(row.get("Logo URL")) else ""}
+        </div>
+        <div style="font-size:1.5em;font-weight:600;margin-bottom:0.5em;">{row.get('Name', 'N/A')}</div>
+        <div style="font-size:1em;opacity:0.8;margin-bottom:0.5em;">SSL Expiry <b>{ssl_date}</b></div>
+        <div style="font-size:1em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
+    </div>
+    </a>
+    """
+    cols[idx % 2].markdown(card_html, unsafe_allow_html=True)
 
 st.markdown("⏱️ Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
