@@ -182,5 +182,8 @@ for idx, row in merged.iterrows():
     </a>
     """
     cols[idx % 4].markdown(card_html, unsafe_allow_html=True)
+    # Add vertical space after every 4 cards (i.e., after each row)
+    if (idx + 1) % 4 == 0:
+        st.markdown("<div style='height:2em'></div>", unsafe_allow_html=True)
 
 st.markdown("Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
