@@ -198,8 +198,30 @@ st.markdown('''
 </style>
 ''', unsafe_allow_html=True)
 
-# Set number of columns based on width
-num_cols = 2 if st.session_state['screen_width'] < 768 else 6
+# Responsive columns: detect screen width using JS cookie
+_ = st.query_params  # triggers rerun
+
+st.markdown("""
+<script>
+    document.cookie = "screen_width=" + window.innerWidth + "; path=/";
+    window.dispatchEvent(new Event('resize'));
+</script>
+""", unsafe_allow_html=True)
+
+import os
+
+def get_screen_width():
+    cookies = os.environ.get("HTTP_COOKIE", "")
+    for cookie in cookies.split(";"):
+        if "screen_width=" in cookie:
+            try:
+                return int(cookie.strip().split("=")[1])
+            except:
+                return 1200
+    return 1200
+
+screen_width = get_screen_width()
+num_cols = 2 if screen_width < 768 else 6
 import math
 num_rows = math.ceil(len(merged) / num_cols)
 card_idx = 0
