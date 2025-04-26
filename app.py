@@ -117,10 +117,10 @@ for idx, row in merged.iterrows():
     except:
         domain_date = "Error"
 
-    # Robustly get the website name (handle possible whitespace/case issues and fallback to URL if missing)
+    # Robustly get the website name (prioritize 'Name', then 'Name_x', then 'Name_y', fallback to URL)
     name = None
-    for col in row.index:
-        if col.strip().lower() in ["name", "website name", "site name"]:
+    for col in ["Name", "Name_x", "Name_y"]:
+        if col in row and pd.notna(row[col]) and str(row[col]).strip() != "":
             name = row[col]
             break
     if not name or str(name).strip() == "":
