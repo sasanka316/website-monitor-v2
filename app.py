@@ -146,27 +146,27 @@ for idx, row in merged.iterrows():
         border-radius:24px;
         box-shadow:{shadow};
         border:1.5px solid {border_color};
-        padding:2em 1.5em 1.5em 1.5em;
-        margin-bottom:2em;
-        min-height:370px;
-        max-height:370px;
-        height:370px;
+        padding:1.2em 1em 1em 1em;
+        margin-bottom:1.2em;
+        min-height:320px;
+        max-height:320px;
+        height:320px;
         display:flex;
         flex-direction:column;
         align-items:center;
         transition:box-shadow 0.2s;
         cursor:pointer;
     ">
-        <div style="background:#fff;border-radius:50%;width:128px;height:128px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
-            {"<img src='"+str(row["Logo URL"]) + "' style='width:110px;height:110px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
+        <div style="background:#fff;border-radius:50%;width:110px;height:110px;display:flex;align-items:center;justify-content:center;margin-bottom:0.7em;">
+            {"<img src='"+str(row["Logo URL"]) + "' style='width:90px;height:90px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
         <div style="
-            font-size:2em;
-            font-weight:700;
-            margin-bottom:0.5em;
+            font-size:1.3em;
+            font-weight:600;
+            margin-bottom:0.3em;
             line-height:1.1;
             text-align:center;
-            height:2.6em;
+            height:2.2em;
             overflow:hidden;
             display:-webkit-box;
             -webkit-line-clamp:2;
@@ -175,8 +175,8 @@ for idx, row in merged.iterrows():
             white-space:normal;">
             {name}
         </div>
-        <div style="font-size:1em;opacity:0.8;margin-bottom:0.5em;">SSL Expiry <b>{ssl_date}</b></div>
-        <div style="font-size:1em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
+        <div style="font-size:0.95em;opacity:0.8;margin-bottom:0.3em;">SSL Expiry <b>{ssl_date}</b></div>
+        <div style="font-size:0.95em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
     </div>
     </a>
     """
