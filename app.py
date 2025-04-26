@@ -146,8 +146,8 @@ for idx, row in merged.iterrows():
         border-radius:24px;
         box-shadow:{shadow};
         border:1.5px solid {border_color};
-        padding:1.2em 1em 0.7em 1em;
-        margin-bottom:0.7em;
+        padding:1.2em 1em 0em 1em;
+        margin-bottom:0em;
         min-height:320px;
         max-height:320px;
         height:320px;
