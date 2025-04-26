@@ -166,3 +166,5 @@ for idx, row in merged.iterrows():
     cols[idx % 2].markdown(card_html, unsafe_allow_html=True)
 
 st.markdown("⏱️ Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+st.write("Columns:", list(merged.columns))
