@@ -129,7 +129,7 @@ selected_sort = st.selectbox("Sort by:", list(sort_options.keys()))
 
 # Sort the data based on the selected option
 if selected_sort == "Not Working":
-    merged = merged.sort_values(by="is_down", ascending=False, na_position='last')
+    merged = merged.sort_values(by=["is_down", "Name"], ascending=[False, True], na_position='last')
 else:
     merged = merged.sort_values(by=sort_options[selected_sort], na_position='last')
 
