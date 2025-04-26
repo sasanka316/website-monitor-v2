@@ -80,7 +80,7 @@ st.markdown(
 st.divider()
 
 # Display website cards in a Cupertino-style grid
-cols = st.columns(4)  # 4-column grid
+cols = st.columns(5)  # 5-column grid
 for idx, row in merged.iterrows():
     # Determine card status
     ssl_expired = False
@@ -181,9 +181,9 @@ for idx, row in merged.iterrows():
     </div>
     </a>
     """
-    cols[idx % 4].markdown(card_html, unsafe_allow_html=True)
-    # Add vertical space after every 4 cards (i.e., after each row)
-    if (idx + 1) % 4 == 0:
+    cols[idx % 5].markdown(card_html, unsafe_allow_html=True)
+    # Add vertical space after every 5 cards (i.e., after each row)
+    if (idx + 1) % 5 == 0:
         st.markdown("<div style='height:2em'></div>", unsafe_allow_html=True)
 
 st.markdown("Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
