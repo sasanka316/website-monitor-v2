@@ -6,7 +6,7 @@ from datetime import datetime
 # Configure page
 st.set_page_config(layout="wide", page_title="Website Monitor")
 st.title("Website Monitor Dashboard")
-st.markdown("Automatically refreshes every 3 hours.")
+#st.markdown("Automatically refreshes every 3 hours.")
 
 @st.cache_data(ttl=10800)  # Cache for 3 hours
 def load_data():
@@ -117,14 +117,24 @@ for idx, row in merged.iterrows():
     except:
         domain_date = "Error"
 
-    # Robustly get the website name (handle possible whitespace/case issues)
+    # Robustly get the website name (handle possible whitespace/case issues and fallback to URL if missing)
     name = None
     for col in row.index:
-        if col.strip().lower() == "name":
+        if col.strip().lower() in ["name", "website name", "site name"]:
             name = row[col]
             break
     if not name or str(name).strip() == "":
-        name = "N/A"
+        # Try to extract from URL
+        url = str(row.get("URL", ""))
+        if url and url.startswith("http"):
+            try:
+                from urllib.parse import urlparse
+                parsed = urlparse(url)
+                name = parsed.hostname.replace("www.", "") if parsed.hostname else url
+            except:
+                name = url
+        else:
+            name = "N/A"
 
     # Card HTML
     card_html = f"""
@@ -144,8 +154,8 @@ for idx, row in merged.iterrows():
         transition:box-shadow 0.2s;
         cursor:pointer;
     ">
-        <div style="background:#fff;border-radius:50%;width:96px;height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
-            {"<img src='"+str(row["Logo URL"])+"' style='width:72px;height:72px;object-fit:contain;border-radius:50%;'>" if pd.notna(row.get("Logo URL")) else ""}
+        <div style="background:#fff;border-radius:50%;width:128px;height:128px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
+            {"<img src='"+str(row["Logo URL"])+"' style='width:110px;height:110px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
         <div style="font-size:2em;font-weight:700;margin-bottom:0.5em;line-height:1.1;text-align:center;">{name}</div>
         <div style="font-size:1em;opacity:0.8;margin-bottom:0.5em;">SSL Expiry <b>{ssl_date}</b></div>
