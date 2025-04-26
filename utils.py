@@ -25,6 +25,12 @@ def connect_to_sheets():
         service_account_info = st.secrets["gcp_service_account"]
         st.write("Service account email:", service_account_info.get("client_email", "Not found"))
         
+        # Get sheet_id from service account info
+        sheet_id = service_account_info.get("sheet_id")
+        if not sheet_id:
+            st.error("❌ Sheet ID missing in service account info!")
+            return None
+            
         # Create credentials
         creds = service_account.Credentials.from_service_account_info(
             service_account_info,
@@ -35,37 +41,29 @@ def connect_to_sheets():
         client = gspread.authorize(creds)
         
         # Test the connection
-        if "sheet_id" in st.secrets:
-            try:
-                spreadsheet = client.open_by_key(st.secrets["sheet_id"])
-                st.success("✅ Successfully connected to Google Sheets")
-                return client
-            except Exception as e:
-                st.error(f"❌ Failed to open spreadsheet: {str(e)}")
-                return None
-        else:
-            st.error("❌ Sheet ID missing in secrets!")
-            return None
+        try:
+            spreadsheet = client.open_by_key(sheet_id)
+            st.success("✅ Successfully connected to Google Sheets")
+            return client, sheet_id
+        except Exception as e:
+            st.error(f"❌ Failed to open spreadsheet: {str(e)}")
+            return None, None
             
     except Exception as e:
         st.error(f"🔴 Google Sheets connection failed: {str(e)}")
         st.error("Please check your secrets configuration in Streamlit Cloud")
-        return None
+        return None, None
 
 def load_data_from_sheet(sheet_name):
     """Generic function to load data from specified sheet"""
     try:
-        client = connect_to_sheets()
-        if not client:
+        client, sheet_id = connect_to_sheets()
+        if not client or not sheet_id:
             st.error("❌ Failed to connect to Google Sheets")
             return pd.DataFrame()
 
-        if "sheet_id" not in st.secrets:
-            st.error("❌ Sheet ID missing in secrets!")
-            return pd.DataFrame()
-
         # Open the spreadsheet
-        spreadsheet = client.open_by_key(st.secrets["sheet_id"])
+        spreadsheet = client.open_by_key(sheet_id)
         
         # Get the worksheet
         worksheet = spreadsheet.worksheet(sheet_name)
