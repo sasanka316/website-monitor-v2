@@ -140,6 +140,9 @@ if selected_sort == "Not Working":
 else:
     merged = merged.sort_values(by=sort_options[selected_sort], na_position='last')
 
+# Reset index to ensure correct card order
+merged = merged.reset_index(drop=True)
+
 # Add custom CSS for card animations only (revert to previous, simpler style)
 st.markdown('''
 <style>
