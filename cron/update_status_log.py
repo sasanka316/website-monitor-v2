@@ -6,6 +6,8 @@ import whois
 import ssl
 import OpenSSL
 import gspread
+import json
+import os
 from urllib.parse import urlparse
 from gspread_pandas import Spread
 from google.oauth2.service_account import Credentials
@@ -14,10 +16,19 @@ import dns.resolver
 # Define required scopes
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 
-def authenticate_gspread(creds_path):
-    creds = Credentials.from_service_account_file(creds_path, scopes=SCOPES)
-    client = gspread.authorize(creds)
-    return client
+def authenticate_gspread():
+    try:
+        # Read credentials from file
+        with open('creds.json', 'r') as f:
+            creds_info = json.load(f)
+        
+        # Create credentials object
+        creds = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
+        client = gspread.authorize(creds)
+        return client
+    except Exception as e:
+        print(f"Authentication error: {str(e)}")
+        sys.exit(1)
 
 def get_domain(url):
     parsed_url = urlparse(url)
@@ -55,41 +66,44 @@ def is_website_down(url):
     except Exception:
         return True  # Consider website down if any error occurs
 
-def main(creds_path):
-    client = authenticate_gspread(creds_path)
-    sheet = client.open("WebsiteMonitor")
+def main():
+    try:
+        client = authenticate_gspread()
+        sheet = client.open("WebsiteMonitor")
 
-    websites_sheet = sheet.worksheet("websites")
-    status_log_sheet = sheet.worksheet("status_log")
+        websites_sheet = sheet.worksheet("websites")
+        status_log_sheet = sheet.worksheet("status_log")
 
-    websites = websites_sheet.get_all_records()
-    timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        websites = websites_sheet.get_all_records()
+        timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
-    for site in websites:
-        name = site["Name"]
-        url = site["URL"]
+        for site in websites:
+            name = site["Name"]
+            url = site["URL"]
 
-        domain = get_domain(url)
+            domain = get_domain(url)
 
-        ssl_expiry = check_ssl_expiry(domain)
-        domain_expiry = check_domain_expiry(domain)
-        is_down = is_website_down(url)
+            ssl_expiry = check_ssl_expiry(domain)
+            domain_expiry = check_domain_expiry(domain)
+            is_down = is_website_down(url)
 
-        status = "OK"
-        if isinstance(ssl_expiry, str) or isinstance(domain_expiry, str) or is_down:
-            status = "DOWN"
+            status = "OK"
+            if isinstance(ssl_expiry, str) or isinstance(domain_expiry, str) or is_down:
+                status = "DOWN"
 
-        new_row = [
-            datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-            name,
-            url,
-            status,
-            ssl_expiry.strftime("%Y-%m-%d") if isinstance(ssl_expiry, datetime.date) else str(ssl_expiry),
-            domain_expiry.strftime("%Y-%m-%d") if isinstance(domain_expiry, datetime.date) else str(domain_expiry)
-        ]
+            new_row = [
+                datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+                name,
+                url,
+                status,
+                ssl_expiry.strftime("%Y-%m-%d") if isinstance(ssl_expiry, datetime.date) else str(ssl_expiry),
+                domain_expiry.strftime("%Y-%m-%d") if isinstance(domain_expiry, datetime.date) else str(domain_expiry)
+            ]
 
-
-        status_log_sheet.append_row(new_row, value_input_option="USER_ENTERED")
+            status_log_sheet.append_row(new_row, value_input_option="USER_ENTERED")
+    except Exception as e:
+        print(f"Error in main execution: {str(e)}")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main()

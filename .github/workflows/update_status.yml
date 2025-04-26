@@ -22,11 +22,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install python-whois  # Explicitly install whois
-        
 
       - name: Run Status Updater
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: |
           echo "$GCP_CREDENTIALS" > creds.json
-          python cron/update_status_log.py creds.json
+          python cron/update_status_log.py
