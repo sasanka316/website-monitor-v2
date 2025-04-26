@@ -29,8 +29,13 @@ def load_data():
     
     # Merge with proper handling for empty DataFrames
     if not websites_df.empty and not statuses_df.empty:
-        return pd.merge(websites_df, statuses_df, on="URL", how="left")
-    return websites_df if not websites_df.empty else statuses_df
+        merged_df = pd.merge(websites_df, statuses_df, on="URL", how="left")
+    else:
+        merged_df = websites_df if not websites_df.empty else statuses_df
+    
+    # Clean and sort the data
+    merged_df['Name'] = merged_df['Name'].fillna('').astype(str).str.strip()
+    return merged_df.sort_values("Name", na_position='last', ignore_index=True)
 
 # Load and process data
 merged = load_data()
