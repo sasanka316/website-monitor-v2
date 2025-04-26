@@ -136,8 +136,6 @@ for idx, row in merged.iterrows():
                 name = url
         else:
             name = "N/A"
-    # Debug output for name
-    st.write(f"Row idx {idx} - Name: {name}")
 
     # Card HTML
     card_html = f"""
@@ -150,7 +148,9 @@ for idx, row in merged.iterrows():
         border:1.5px solid {border_color};
         padding:2em 1.5em 1.5em 1.5em;
         margin-bottom:2em;
-        min-height:270px;
+        min-height:370px;
+        max-height:370px;
+        height:370px;
         display:flex;
         flex-direction:column;
         align-items:center;
@@ -160,7 +160,21 @@ for idx, row in merged.iterrows():
         <div style="background:#fff;border-radius:50%;width:128px;height:128px;display:flex;align-items:center;justify-content:center;margin-bottom:1em;">
             {"<img src='"+str(row["Logo URL"]) + "' style='width:110px;height:110px;object-fit:contain;border-radius:50%;border:none;'>" if pd.notna(row.get("Logo URL")) else ""}
         </div>
-        <div style="font-size:2em;font-weight:700;margin-bottom:0.5em;line-height:1.1;text-align:center;">{name}</div>
+        <div style="
+            font-size:2em;
+            font-weight:700;
+            margin-bottom:0.5em;
+            line-height:1.1;
+            text-align:center;
+            height:2.6em;
+            overflow:hidden;
+            display:-webkit-box;
+            -webkit-line-clamp:2;
+            -webkit-box-orient:vertical;
+            text-overflow:ellipsis;
+            white-space:normal;">
+            {name}
+        </div>
         <div style="font-size:1em;opacity:0.8;margin-bottom:0.5em;">SSL Expiry <b>{ssl_date}</b></div>
         <div style="font-size:1em;opacity:0.8;">Domain Expiry <b>{domain_date}</b></div>
     </div>
@@ -169,5 +183,3 @@ for idx, row in merged.iterrows():
     cols[idx % 4].markdown(card_html, unsafe_allow_html=True)
 
 st.markdown("Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
-st.write("Columns:", list(merged.columns))
