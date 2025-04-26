@@ -6,7 +6,7 @@ from datetime import datetime
 # Configure page
 st.set_page_config(layout="wide", page_title="Website Monitor")
 st.title("Website Monitor Dashboard")
-st.markdown("Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+st.markdown("<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>Last refreshed: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "</div>", unsafe_allow_html=True)
 #st.markdown("Automatically refreshes every 3 hours.")
 
 @st.cache_data(ttl=10800)  # Cache for 3 hours
@@ -90,12 +90,13 @@ down_count = sum(
     if 'Status' in merged.columns else 0
 )
 
-# Display summary
+# Compact summary row
 st.markdown(
-    f"**Total:** {total} | ❌ **Down:** {down_count} | "
-    f"🔒 **Expired SSL:** {expired_ssl} | 🌐 **Expired Domain:** {expired_domain}"
+    f"<div style='font-size:1em; margin-bottom:0.2em; margin-top:-0.7em;'><b>Total:</b> {total} | <span style='color:#b00020;'>❌ <b>Down:</b> {down_count}</span> | "
+    f"<span style='color:#bfa100;'>🔒 <b>Expired SSL:</b> {expired_ssl}</span> | <span style='color:#0077c2;'>🌐 <b>Expired Domain:</b> {expired_domain}</span></div>",
+    unsafe_allow_html=True
 )
-st.divider()
+st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_html=True)
 
 # Add custom CSS for card animations only (revert to previous, simpler style)
 st.markdown('''
