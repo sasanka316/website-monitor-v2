@@ -2,6 +2,7 @@ import streamlit as st
 from utils import load_websites, load_latest_statuses
 import pandas as pd
 from datetime import datetime
+from pandas.api.types import is_datetime64_any_dtype
 
 # Configure page
 st.set_page_config(layout="wide", page_title="Website Monitor")
@@ -101,15 +102,34 @@ st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_
 # Add sorting options
 sort_options = {
     "Alphabetical": "Name",
-    "Not Working": "Status",
+    "Not Working": "is_down",
     "SSL Expiry Date": "SSL Expiry",
     "Domain Expiry Date": "Domain Expiry"
 }
+
+# Add is_down column for sorting
+def compute_is_down(row):
+    ssl_expired = False
+    domain_expired = False
+    try:
+        if pd.notna(row.get("SSL Expiry")):
+            ssl_expired = pd.to_datetime(row["SSL Expiry"]) < current_time
+    except:
+        ssl_expired = True
+    try:
+        if pd.notna(row.get("Domain Expiry")):
+            domain_expired = pd.to_datetime(row["Domain Expiry"]) < current_time
+    except:
+        domain_expired = True
+    return (row.get("Status", "N/A") != "OK") or ssl_expired or domain_expired
+
+merged["is_down"] = merged.apply(compute_is_down, axis=1)
+
 selected_sort = st.selectbox("Sort by:", list(sort_options.keys()))
 
 # Sort the data based on the selected option
 if selected_sort == "Not Working":
-    merged = merged.sort_values(by="Status", key=lambda x: x != "OK", na_position='last')
+    merged = merged.sort_values(by="is_down", ascending=False, na_position='last')
 else:
     merged = merged.sort_values(by=sort_options[selected_sort], na_position='last')
 
