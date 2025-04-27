@@ -134,23 +134,29 @@ with header_col1:
         unsafe_allow_html=True
     )
 with header_col2:
-    selected_sort = st.selectbox(
-        "Sort By:",
-        list(sort_options.keys()),
-        key="sortbox"
-    )
-    st.markdown(
-        '''
-        <style>
-        div[data-testid=\"stSelectbox\"] {
-            width: 220px !important;
-            min-width: 120px !important;
-            float: right;
-        }
-        </style>
-        ''',
-        unsafe_allow_html=True
-    )
+    sort_label_col, sort_dropdown_col = st.columns([1, 2])
+    with sort_label_col:
+        st.markdown(
+            "<div style='font-weight:600; text-align:right; margin-top:0.4em;'>Sort By:</div>",
+            unsafe_allow_html=True
+        )
+    with sort_dropdown_col:
+        selected_sort = st.selectbox(
+            "",
+            list(sort_options.keys()),
+            key="sortbox"
+        )
+        st.markdown(
+            '''
+            <style>
+            div[data-testid=\"stSelectbox\"] {
+                width: 100% !important;
+                min-width: 120px !important;
+            }
+            </style>
+            ''',
+            unsafe_allow_html=True
+        )
 
 st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_html=True)
 
