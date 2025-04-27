@@ -134,31 +134,35 @@ with header_col1:
         unsafe_allow_html=True
     )
 with header_col2:
-    sort_label_col, sort_dropdown_col = st.columns([0.7, 1.3])
-    with sort_label_col:
-        st.markdown(
-            "<div style='font-weight:600; text-align:right; line-height:2.4; font-size:1em;'>Sort By:</div>",
-            unsafe_allow_html=True
-        )
-    with sort_dropdown_col:
-        selected_sort = st.selectbox(
-            "",
-            list(sort_options.keys()),
-            key="sortbox"
-        )
-        st.markdown(
-            '''
-            <style>
-            div[data-testid=\"stSelectbox\"] {
-                width: 140px !important;
-                min-width: 100px !important;
-                margin-left: 0.1em;
-                vertical-align: middle !important;
-            }
-            </style>
-            ''',
-            unsafe_allow_html=True
-        )
+    st.markdown(
+        """
+        <div style='display: flex; align-items: center; justify-content: flex-end;'>
+            <span style='font-weight:600; font-size:1em; margin-right:0.5em;'>Sort By:</span>
+            <div style='flex:1; min-width:120px; max-width:160px;'>
+                <!-- The selectbox will render here -->
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    selected_sort = st.selectbox(
+        "",
+        list(sort_options.keys()),
+        key="sortbox"
+    )
+    st.markdown(
+        '''
+        <style>
+        div[data-testid="stSelectbox"] {
+            margin-top: -2.2em;
+            margin-left: 7.5em;
+            width: 160px !important;
+            min-width: 120px !important;
+        }
+        </style>
+        ''',
+        unsafe_allow_html=True
+    )
 
 st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_html=True)
 
