@@ -134,9 +134,8 @@ with header_col1:
         unsafe_allow_html=True
     )
 with header_col2:
-    st.markdown("<div style='font-weight:600; margin-bottom:0.3em; text-align:right;'>Sort By:</div>", unsafe_allow_html=True)
     selected_sort = st.selectbox(
-        "",
+        "Sort By:",
         list(sort_options.keys()),
         key="sortbox"
     )
