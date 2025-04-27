@@ -7,3 +7,4 @@ pyOpenSSL>=20.0.0
 python-whois>=0.8.0
 google-auth>=2.0.0
 dnspython>=2.0.0
+cloudscraper
