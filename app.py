@@ -120,8 +120,8 @@ def compute_is_down(row):
 merged["is_down"] = merged.apply(compute_is_down, axis=1)
 
 # Create header and sort dropdown in the same row
-header_col1, header_col2 = st.columns([0.7, 0.3])
-with header_col1:
+header_cols = st.columns(6)
+with header_cols[0]:
     st.title("Website Monitor Dashboard")
     st.markdown(
         "<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>Last Refreshed: " +
@@ -133,24 +133,14 @@ with header_col1:
         f"<span style='color:#000000;'>🔒 <b>Expired SSL:</b> {expired_ssl}</span> | <span style='color:#000000;'>🌐 <b>Expired Domain:</b> {expired_domain}</span></div>",
         unsafe_allow_html=True
     )
-with header_col2:
-    st.markdown(
-        '''
-        <div style="display: flex; align-items: center; justify-content: flex-end; margin-top: 2.1em;">
-            <span style="font-weight: 600; margin-right: 0.7em;">Sort By:</span>
-            <div style="min-width: 200px; max-width: 260px;">
-                <div id="sortbox-anchor"></div>
-            </div>
-        </div>
-        ''',
-        unsafe_allow_html=True
-    )
+for i in range(1, 5):
+    with header_cols[i]:
+        st.write("")  # Empty columns for spacing
+with header_cols[5]:
     selected_sort = st.selectbox(
-        "",
+        "Sort By:",
         list(sort_options.keys()),
-        label_visibility="collapsed",
-        key="sortbox",
-        index=0
+        key="sortbox"
     )
     st.markdown(
         '''
@@ -158,7 +148,6 @@ with header_col2:
         div[data-testid="stSelectbox"] {
             width: 220px !important;
             min-width: 180px !important;
-            margin-top: -2.1em !important;
         }
         </style>
         ''',
