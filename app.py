@@ -77,7 +77,6 @@ for col in required_columns:
     if col not in merged.columns:
         merged[col] = None if col in ['SSL Expiry', 'Domain Expiry'] else 'N/A'
 
-# Sort and calculate metrics
 # Clean and prepare the Name column for sorting
 merged['Name'] = merged['Name'].fillna('').astype(str).str.strip()
 merged = merged.sort_values("Name", na_position='last', ignore_index=True)
