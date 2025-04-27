@@ -11,11 +11,24 @@ current_time = datetime.now()
 
 # Configure page
 st.set_page_config(layout="wide", page_title="Website Monitor")
-st.title("Website Monitor Dashboard")
-st.markdown("<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>Last Refreshed: " +
-    datetime.now(ZoneInfo('Asia/Colombo')).strftime("%Y-%m-%d %H:%M:%S") +
-    " (SLST, GMT+5:30)</div>", unsafe_allow_html=True)
-#st.markdown("Automatically refreshes every 3 hours.")
+
+# Create header and sort dropdown in the same row
+header_col1, header_col2 = st.columns([0.7, 0.3])
+with header_col1:
+    st.title("Website Monitor Dashboard")
+    st.markdown("<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>Last Refreshed: " +
+        datetime.now(ZoneInfo('Asia/Colombo')).strftime("%Y-%m-%d %H:%M:%S") +
+        " (SLST, GMT+5:30)</div>", unsafe_allow_html=True)
+    st.markdown(
+        f"<div style='font-size:1em; margin-bottom:0.2em; margin-top:-0.7em;'><b>Total:</b> {total} | <span style='color:#000000;'>❌ <b>Down:</b> {down_count}</span> | "
+        f"<span style='color:#000000;'>🔒 <b>Expired SSL:</b> {expired_ssl}</span> | <span style='color:#000000;'>🌐 <b>Expired Domain:</b> {expired_domain}</span></div>",
+        unsafe_allow_html=True
+    )
+with header_col2:
+    st.markdown("<div style='text-align:right; margin-top:1.5em;'><b>Sort by:</b></div>", unsafe_allow_html=True)
+    selected_sort = st.selectbox("", list(sort_options.keys()), label_visibility="collapsed", key="sortbox")
+
+st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_html=True)
 
 @st.cache_data(ttl=10800)  # Cache for 3 hours
 def load_data():
@@ -97,14 +110,6 @@ down_count = sum(
     if 'Status' in merged.columns else 0
 )
 
-# Compact summary row
-st.markdown(
-    f"<div style='font-size:1em; margin-bottom:0.2em; margin-top:-0.7em;'><b>Total:</b> {total} | <span style='color:#000000;'>❌ <b>Down:</b> {down_count}</span> | "
-    f"<span style='color:#000000;'>🔒 <b>Expired SSL:</b> {expired_ssl}</span> | <span style='color:#000000;'>🌐 <b>Expired Domain:</b> {expired_domain}</span></div>",
-    unsafe_allow_html=True
-)
-st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_html=True)
-
 # Add sorting options
 sort_options = {
     "Alphabetical": "Name",
@@ -132,13 +137,6 @@ def compute_is_down(row):
     return (status != "ok") or ssl_expired or domain_expired
 
 merged["is_down"] = merged.apply(compute_is_down, axis=1)
-
-# Place 'Sort by:' and dropdown on the same row
-col1, col2 = st.columns([0.13, 0.87])
-with col1:
-    st.markdown("**Sort By:**", unsafe_allow_html=True)
-with col2:
-    selected_sort = st.selectbox("", list(sort_options.keys()), label_visibility="collapsed")
 
 # Sort the data based on the selected option
 if selected_sort == "Not Working":
