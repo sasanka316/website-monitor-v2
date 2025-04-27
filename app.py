@@ -146,7 +146,7 @@ with header_col2:
             width: 160px !important;
             min-width: 120px !important;
             float: right;
-            margin-top: 2.4em;
+            margin-top: 2.7em;
         }
         </style>
         ''',
