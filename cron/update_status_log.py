@@ -1,6 +1,6 @@
 import sys
 import socket
-import requests
+import cloudscraper
 import datetime
 import whois
 import ssl
@@ -60,8 +60,9 @@ def is_website_down(url):
         domain = get_domain(url)
         dns.resolver.resolve(domain, 'A')
         
-        # HTTP check
-        response = requests.get(url, timeout=10)
+        # HTTP check using cloudscraper
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(url, timeout=10)
         return response.status_code != 200
     except Exception:
         return True  # Consider website down if any error occurs
