@@ -137,7 +137,7 @@ with header_col2:
     sort_label_col, sort_dropdown_col = st.columns([0.7, 1.3])
     with sort_label_col:
         st.markdown(
-            "<div style='font-weight:600; text-align:right; margin-top:0.6em;'>Sort By:</div>",
+            "<div style='font-weight:600; text-align:right; line-height:2.4; font-size:1em;'>Sort By:</div>",
             unsafe_allow_html=True
         )
     with sort_dropdown_col:
@@ -150,9 +150,10 @@ with header_col2:
             '''
             <style>
             div[data-testid=\"stSelectbox\"] {
-                width: 160px !important;
-                min-width: 120px !important;
-                margin-left: 0.2em;
+                width: 140px !important;
+                min-width: 100px !important;
+                margin-left: 0.1em;
+                vertical-align: middle !important;
             }
             </style>
             ''',
