@@ -134,17 +134,6 @@ with header_col1:
         unsafe_allow_html=True
     )
 with header_col2:
-    st.markdown(
-        """
-        <div style='display: flex; align-items: center; justify-content: flex-end;'>
-            <span style='font-weight:600; font-size:1em; margin-right:0.5em;'>Sort By:</span>
-            <div style='flex:1; min-width:120px; max-width:160px;'>
-                <!-- The selectbox will render here -->
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
     selected_sort = st.selectbox(
         "",
         list(sort_options.keys()),
@@ -153,11 +142,10 @@ with header_col2:
     st.markdown(
         '''
         <style>
-        div[data-testid="stSelectbox"] {
-            margin-top: -2.2em;
-            margin-left: 7.5em;
+        div[data-testid=\"stSelectbox\"] {
             width: 160px !important;
             min-width: 120px !important;
+            float: right;
         }
         </style>
         ''',
