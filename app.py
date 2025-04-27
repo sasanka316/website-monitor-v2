@@ -137,8 +137,8 @@ with header_col2:
     st.markdown(
         '''
         <div style="display: flex; align-items: center; justify-content: flex-end; margin-top: 2.1em;">
-            <span style="font-weight: 600; margin-right: 0.5em;">Sort By:</span>
-            <div style="min-width: 120px; max-width: 160px;">
+            <span style="font-weight: 600; margin-right: 0.7em;">Sort By:</span>
+            <div style="min-width: 200px; max-width: 260px;">
                 <div id="sortbox-anchor"></div>
             </div>
         </div>
@@ -156,8 +156,8 @@ with header_col2:
         '''
         <style>
         div[data-testid="stSelectbox"] {
-            width: 140px !important;
-            min-width: 100px !important;
+            width: 220px !important;
+            min-width: 180px !important;
             margin-top: -2.1em !important;
         }
         </style>
