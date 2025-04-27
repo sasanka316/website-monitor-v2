@@ -120,8 +120,8 @@ def compute_is_down(row):
 merged["is_down"] = merged.apply(compute_is_down, axis=1)
 
 # Adjust the ratio so the right column matches the width of one card out of six
-header_col1, header_col2 = st.columns([5, 1])
-with header_col1:
+header_cols = st.columns(6)
+with header_cols[0]:
     st.title("Website Monitor Dashboard")
     st.markdown(
         "<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>Last Refreshed: " +
@@ -133,13 +133,11 @@ with header_col1:
         f"<span style='color:#000000;'>🔒 <b>Expired SSL:</b> {expired_ssl}</span> | <span style='color:#000000;'>🌐 <b>Expired Domain:</b> {expired_domain}</span></div>",
         unsafe_allow_html=True
     )
-with header_col2:
-    st.markdown(
-        "<div style='display: flex; align-items: center; justify-content: flex-end; margin-top: 2.1em;'>"
-        "<span style='font-weight: 600; margin-right: 0.7em;'>Sort By:</span>"
-        "</div>",
-        unsafe_allow_html=True
-    )
+for i in range(1, 5):
+    with header_cols[i]:
+        st.write("")  # Empty for spacing
+with header_cols[5]:
+    st.markdown("<div style='text-align:right; font-weight:600; margin-bottom:0.3em;'>Sort By:</div>", unsafe_allow_html=True)
     selected_sort = st.selectbox(
         "",
         list(sort_options.keys()),
@@ -149,8 +147,8 @@ with header_col2:
         '''
         <style>
         div[data-testid="stSelectbox"] {
-            width: 220px !important;
-            min-width: 180px !important;
+            width: 100% !important;
+            min-width: 120px !important;
         }
         </style>
         ''',
