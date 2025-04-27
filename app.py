@@ -148,6 +148,12 @@ with header_col2:
             float: right;
             margin-top: 2.7em;
         }
+        @media (max-width: 600px) {
+            div[data-testid=\"stSelectbox\"] {
+                margin-top: 0.5em !important;
+                float: none;
+            }
+        }
         </style>
         ''',
         unsafe_allow_html=True
