@@ -133,7 +133,12 @@ def compute_is_down(row):
 
 merged["is_down"] = merged.apply(compute_is_down, axis=1)
 
-selected_sort = st.selectbox("Sort by:", list(sort_options.keys()))
+# Place 'Sort by:' and dropdown on the same row
+col1, col2 = st.columns([0.12, 0.88])
+with col1:
+    st.markdown("**Sort by:**", unsafe_allow_html=True)
+with col2:
+    selected_sort = st.selectbox("", list(sort_options.keys()))
 
 # Sort the data based on the selected option
 if selected_sort == "Not Working":
