@@ -120,42 +120,39 @@ def compute_is_down(row):
 merged["is_down"] = merged.apply(compute_is_down, axis=1)
 
 # Wide header with absolutely positioned dropdown
-st.markdown(
-    '''
-    <div style="position: relative;">
-        <div style="display: flex; flex-direction: column;">
-            <div>
-                <h1 style="margin-bottom:0.2em;">Website Monitor Dashboard</h1>
-                <div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>
-                    Last Refreshed: ''' +
-                    datetime.now(ZoneInfo('Asia/Colombo')).strftime("%Y-%m-%d %H:%M:%S") +
-                    ''' (SLST, GMT+5:30)
-                </div>
-                <div style='font-size:1em; margin-bottom:0.2em; margin-top:-0.7em;'>
-                    <b>Total:</b> ''' + str(total) + ''' | <span style='color:#000000;'>❌ <b>Down:</b> ''' + str(down_count) + '''</span> | 
-                    <span style='color:#000000;'>🔒 <b>Expired SSL:</b> ''' + str(expired_ssl) + '''</span> | <span style='color:#000000;'>🌐 <b>Expired Domain:</b> ''' + str(expired_domain) + '''</span>
-                </div>
-            </div>
-            <div style="position: absolute; top: 0; right: 0; width: 220px;">
-                <div style="font-weight:600; margin-bottom:0.3em; text-align:right;">Sort By:</div>
-                <div id="sortbox-anchor"></div>
-            </div>
-        </div>
-    </div>
-    <style>
-    div[data-testid="stSelectbox"] {
-        width: 100% !important;
-        min-width: 120px !important;
-    }
-    </style>
-    ''',
-    unsafe_allow_html=True
-)
-selected_sort = st.selectbox(
-    "",
-    list(sort_options.keys()),
-    key="sortbox"
-)
+header_col1, header_col2 = st.columns([5, 1])
+with header_col1:
+    st.title("Website Monitor Dashboard")
+    st.markdown(
+        "<div style='margin-top:-1.2em; margin-bottom:0.2em; font-size:0.98em;'>Last Refreshed: " +
+        datetime.now(ZoneInfo('Asia/Colombo')).strftime("%Y-%m-%d %H:%M:%S") +
+        " (SLST, GMT+5:30)</div>", unsafe_allow_html=True
+    )
+    st.markdown(
+        f"<div style='font-size:1em; margin-bottom:0.2em; margin-top:-0.7em;'><b>Total:</b> {total} | <span style='color:#000000;'>❌ <b>Down:</b> {down_count}</span> | "
+        f"<span style='color:#000000;'>🔒 <b>Expired SSL:</b> {expired_ssl}</span> | <span style='color:#000000;'>🌐 <b>Expired Domain:</b> {expired_domain}</span></div>",
+        unsafe_allow_html=True
+    )
+with header_col2:
+    st.markdown("<div style='font-weight:600; margin-bottom:0.3em; text-align:right;'>Sort By:</div>", unsafe_allow_html=True)
+    selected_sort = st.selectbox(
+        "",
+        list(sort_options.keys()),
+        key="sortbox"
+    )
+    st.markdown(
+        '''
+        <style>
+        div[data-testid=\"stSelectbox\"] {
+            width: 220px !important;
+            min-width: 120px !important;
+            float: right;
+        }
+        </style>
+        ''',
+        unsafe_allow_html=True
+    )
+
 st.markdown("<hr style='margin-top:0.5em; margin-bottom:0.5em;'>", unsafe_allow_html=True)
 
 # Sort the data based on the selected option
