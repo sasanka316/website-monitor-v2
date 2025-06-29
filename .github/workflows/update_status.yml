@@ -2,7 +2,7 @@ name: Update Website Status Log
 
 on:
   schedule:
-    - cron: '0 */3 * * *'  # Every 3 hours
+    - cron: '0 */12 * * *'  # Every 12 hours
   workflow_dispatch:
 
 jobs:
